@@ -1,6 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 This is a sample [`Next.js`](https://nextjs.org) web app that utilises [`Open Weather API`](https://openweathermap.org), [`Framer Motion`](https://www.framer.com/motion/) and [`TailwindCSS`](https://tailwindcss.com/).
+
+This repository uses the [`Gitmoji`](https://gitmoji.dev) emoji guide for commit messages.
 
 ## Getting Started
 
