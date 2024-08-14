@@ -1,18 +1,18 @@
-import type { Config } from "tailwindcss";
-import defaultTheme from "tailwindcss/defaultTheme";
+import type { Config } from 'tailwindcss';
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic':
+          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
     container: {
@@ -20,7 +20,10 @@ const config: Config = {
     },
     fontFamily: {
       'proxima-nova': ['proxima-nova', ...defaultTheme.fontFamily.sans],
-      'proxima-nova-cond': ['proxima-nova-condensed', ...defaultTheme.fontFamily.sans],
+      'proxima-nova-cond': [
+        'proxima-nova-condensed',
+        ...defaultTheme.fontFamily.sans,
+      ],
     },
     colors: {
       current: 'currentColor',
@@ -28,9 +31,10 @@ const config: Config = {
       white: '#f9f9f9',
       black: '#000',
       blue: {
-        'light': '#ECF5FB',
-      }
-    }
+        light: '#ECF5FB',
+        mid: '#184792',
+      },
+    },
   },
   plugins: [],
 };
