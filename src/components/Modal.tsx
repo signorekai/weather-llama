@@ -1,12 +1,5 @@
-import { type AppState } from '@/types/App';
+import { useAppStore } from '@/stores/App';
 import { AnimatePresence, motion } from 'framer-motion';
-import { create } from 'zustand';
-
-export const useAppStore = create<AppState>()((set) => ({
-	showBackdrop: false,
-	setShowBackdrop: (showBackdrop) =>
-		set((state) => ({ ...state, showBackdrop })),
-}));
 
 export default function Modal() {
 	const showBackdrop = useAppStore((state) => state.showBackdrop);
