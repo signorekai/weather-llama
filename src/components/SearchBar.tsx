@@ -2,7 +2,8 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import Modal, { useAppStore } from '@/components/Modal';
+import { useAppStore } from '@/components/Modal';
+import { City } from '@/types/City';
 
 function Result({
 	city,
@@ -27,17 +28,6 @@ function Result({
 			</button>
 		</li>
 	);
-}
-
-export interface City {
-	name: string;
-	local_names: {
-		[index: string]: string;
-	};
-	lat: number;
-	lng: number;
-	country: string;
-	state?: string;
 }
 
 export default function Search() {
