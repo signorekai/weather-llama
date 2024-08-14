@@ -16,7 +16,8 @@
 		"openweathermap-ts": "^1.2.10",
 		"react": "^18",
 		"react-dom": "^18",
-		"swr": "^2.2.5"
+		"swr": "^2.2.5",
+		"zustand": "^4.5.4"
 	},
 	"devDependencies": {
 		"@types/lodash.debounce": "^4.0.9",
