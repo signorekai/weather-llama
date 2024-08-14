@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useAppStore } from '@/components/Modal';
+import { useAppStore } from '@/stores/App';
 import { City } from '@/types/City';
 
 function Result({
@@ -12,16 +12,11 @@ function Result({
 	city: City;
 	clickHandler: () => void;
 }>) {
-	const setShowBackdrop = useAppStore((state) => state.setShowBackdrop);
-
 	return (
 		<li>
 			<button
 				className="block px-4.5 py-2 w-full text-left"
-				onClick={() => {
-					clickHandler();
-					setShowBackdrop(false);
-				}}>
+				onClick={clickHandler}>
 				{city.name}
 				{typeof city.state !== 'undefined' ? `, ${city.state}` : ''},{' '}
 				{city.country}
@@ -39,6 +34,7 @@ export default function Search() {
 
 	const showBackdrop = useAppStore((state) => state.showBackdrop);
 	const setShowBackdrop = useAppStore((state) => state.setShowBackdrop);
+	const setCurrentCity = useAppStore((state) => state.setCurrentCity);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setQuery(e.target.value);
@@ -153,7 +149,9 @@ export default function Search() {
 																	: ''
 															}, ${result.country}`,
 														);
+														setCurrentCity(result);
 														setSearchResult([]);
+														setShowBackdrop(false);
 													}}
 													key={`${result.lat},${result.lng}`}
 												/>
