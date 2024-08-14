@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
   content: [
@@ -14,6 +15,22 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
     },
+    container: {
+      center: true,
+    },
+    fontFamily: {
+      'proxima-nova': ['proxima-nova', ...defaultTheme.fontFamily.sans],
+      'proxima-nova-cond': ['proxima-nova-condensed', ...defaultTheme.fontFamily.sans],
+    },
+    colors: {
+      current: 'currentColor',
+      transparent: 'transparent',
+      white: '#f9f9f9',
+      black: '#000',
+      blue: {
+        'light': '#ECF5FB',
+      }
+    }
   },
   plugins: [],
 };
