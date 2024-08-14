@@ -40,6 +40,9 @@ const config: Config = {
 				light: '#ECF5FB',
 				mid: '#184792',
 			},
+			red: {
+				DEFAULT: '#ff5555',
+			},
 		},
 	},
 	plugins: [],

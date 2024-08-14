@@ -39,6 +39,11 @@ body {
 		@apply transition-all duration-200 ease-in-out;
 	}
 
+	.input-has-error {
+		outline: solid 3px #d56978;
+		@apply text-red;
+	}
+
 	.text-balance {
 		text-wrap: balance;
 	}

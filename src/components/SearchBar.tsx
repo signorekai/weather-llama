@@ -29,7 +29,7 @@ function Result({
 		<li className={`flex flex-row items-center ${className}`}>
 			<button
 				tabIndex={0}
-				className={`block py-3 flex-1 text-left ${btnClassName}`}
+				className={`block py-3 flex-1 text-left hover:opacity-50 default-transition ${btnClassName}`}
 				onClick={clickHandler}>
 				{city.fullName}
 			</button>
@@ -50,6 +50,7 @@ export default function Search() {
 	const [query, setQuery] = useState('');
 	const [isFetching, setIsFetching] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
+	const [hasError, setHasError] = useState(false);
 	const [searchResult, setSearchResult] = useState<CityWithName[]>([]);
 	const inputRef = useRef(null);
 
@@ -66,6 +67,9 @@ export default function Search() {
 		const res = await fetch(`/api/geocoding?city=${query}`);
 		const { data }: { data: CityWithName[] } = await res.json();
 		setSearchResult(data);
+		if (data.length === 0) {
+			setHasError(true);
+		}
 		setIsFetching(false);
 	}, [query]);
 
@@ -128,13 +132,16 @@ export default function Search() {
 				}}>
 				<form className="relative" onSubmit={handleSubmit}>
 					<input
-						className="shadow-md rounded-lg px-4.5 py-2 lg:px-4 lg:py-1 default-transition hover:px-4.5 hover:py-2 focus:px-4.5 focus:py-2 w-full md:min-w-96"
+						className={`shadow-md outline-offset-1 rounded-lg px-4.5 py-2 lg:px-4 lg:py-1 default-transition hover:px-4.5 hover:py-2 focus:px-4.5 focus:py-2 w-full md:min-w-96 ${
+							hasError ? 'input-has-error' : ''
+						}`}
 						placeholder="Search country or city here..."
 						ref={inputRef}
 						type="text"
 						value={query}
 						onChange={(e) => {
 							setQuery(e.target.value);
+							setHasError(false);
 						}}
 					/>
 					<AnimatePresence mode="wait">
