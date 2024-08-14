@@ -1,56 +1,78 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppStore } from '@/stores/App';
-import { City } from '@/types/City';
+import { useSearchHistoryStore } from '@/stores/SearchHistory';
+import { City, CityWithName } from '@/types/City';
+import TrashBtn from './TrashBtn';
 
 function Result({
 	city,
+	className = '',
+	btnClassName = '',
 	clickHandler,
+	showButtons = false,
 }: Readonly<{
-	city: City;
+	city: CityWithName;
+	className?: string;
+	btnClassName?: string;
 	clickHandler: () => void;
+	showButtons?: boolean;
 }>) {
 	return (
-		<li>
+		<li className={`flex flex-row items-center ${className}`}>
 			<button
-				className="block px-4.5 py-2 w-full text-left"
+				tabIndex={0}
+				className={`block py-3 flex-1 text-left ${btnClassName}`}
 				onClick={clickHandler}>
-				{city.name}
-				{typeof city.state !== 'undefined' ? `, ${city.state}` : ''},{' '}
-				{city.country}
+				{city.fullName}
 			</button>
+			{showButtons && (
+				<>
+					<TrashBtn clickHandler={() => {}} />
+				</>
+			)}
 		</li>
 	);
 }
+
+export const addNameToCity = (city: City): CityWithName => {
+	return {
+		...city,
+		fullName: `${city.name}${
+			typeof city.state !== 'undefined' ? `, ${city.state}` : ''
+		}, ${city.country}`,
+	};
+};
 
 export default function Search() {
 	const [query, setQuery] = useState('');
 	const [isFetching, setIsFetching] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
-	const [searchResult, setSearchResult] = useState<City[]>([]);
+	const [searchResult, setSearchResult] = useState<CityWithName[]>([]);
 	const inputRef = useRef(null);
 
 	const showBackdrop = useAppStore((state) => state.showBackdrop);
 	const setShowBackdrop = useAppStore((state) => state.setShowBackdrop);
 	const setCurrentCity = useAppStore((state) => state.setCurrentCity);
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setQuery(e.target.value);
-	};
+	const searchHistory = useSearchHistoryStore((state) => state.searchHistory);
+	const addSearchHistory = useSearchHistoryStore((state) => state.add);
+	const pushSearchHistoryToFront = useSearchHistoryStore((state) => state.push);
+
+	const fetchCity = useCallback(async () => {
+		setIsFetching(true);
+		const res = await fetch(`/api/geocoding?city=${query}`);
+		const { data }: { data: City[] } = await res.json();
+		const dataWithName: CityWithName[] = data.map(addNameToCity);
+		setSearchResult(dataWithName);
+		setIsFetching(false);
+	}, [query]);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		fetchCity();
-	};
-
-	const fetchCity = async () => {
-		setIsFetching(true);
-		const res = await fetch(`/api/geocoding?city=${query}`);
-		const { data }: { data: City[] } = await res.json();
-		setSearchResult(data);
-		setIsFetching(false);
 	};
 
 	useEffect(() => {
@@ -58,17 +80,43 @@ export default function Search() {
 	}, [showBackdrop]);
 
 	useEffect(() => {
-		if ('geolocation' in navigator) {
-			navigator.geolocation.getCurrentPosition(async (position) => {
-				setIsFetching(true);
-				const res = await fetch(
-					`/api/geocoding?lat=${position.coords.latitude}&lng=${position.coords.longitude}`,
-				);
-				const { data }: { data: City[] } = await res.json();
-				if (data.length > 0) setSearchResult(data);
-				setIsFetching(false);
-			});
+		if (searchHistory.length > 0) {
+			setQuery(searchHistory[0].fullName);
+			setCurrentCity(searchHistory[0].city);
 		}
+	}, [searchHistory, setCurrentCity]);
+
+	useEffect(() => {
+		useSearchHistoryStore.persist.rehydrate();
+		const unsub = useSearchHistoryStore.persist.onFinishHydration(
+			({ searchHistory }) => {
+				if (searchHistory.length > 0) {
+					setQuery(searchHistory[0].fullName);
+					pushSearchHistoryToFront(searchHistory[0]);
+					setQuery(searchHistory[0].fullName);
+					setCurrentCity(searchHistory[0].city);
+				} else if ('geolocation' in navigator) {
+					// grab device lat/lon
+					navigator.geolocation.getCurrentPosition(async (position) => {
+						setIsFetching(true);
+						const res = await fetch(
+							`/api/geocoding?lat=${position.coords.latitude}&lng=${position.coords.longitude}`,
+						);
+						const { data }: { data: City[] } = await res.json();
+						if (data.length > 0) {
+							const dataWithName: CityWithName[] = data.map(addNameToCity);
+							addSearchHistory(dataWithName[0]);
+							setQuery(dataWithName[0].fullName);
+							setCurrentCity(dataWithName[0]);
+						}
+						setIsFetching(false);
+					});
+				}
+			},
+		);
+		return () => {
+			unsub();
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -87,7 +135,9 @@ export default function Search() {
 						ref={inputRef}
 						type="text"
 						value={query}
-						onChange={handleInputChange}
+						onChange={(e) => {
+							setQuery(e.target.value);
+						}}
 					/>
 					<AnimatePresence mode="wait">
 						{isFetching && (
@@ -119,10 +169,41 @@ export default function Search() {
 							animate={{ opacity: 1, translateY: 0, scale: 1 }}
 							exit={{ opacity: 0, translateY: 40, scale: 0.9 }}
 							className="fixed mt-8 left-0 lg:left-auto px-4 w-full lg:px-0 lg:w-auto">
-							<h6 className="text-blue-light">Previous Searches</h6>
-							<ul className="bg-white rounded-lg px-4.5 py-2 w-full md:min-w-96">
-								WIP
-							</ul>
+							<AnimatePresence mode="wait">
+								{searchHistory.length > 0 && (
+									<motion.div key="search-results-history">
+										<h6 className="text-blue-light">Previous Searches</h6>
+										<div className="bg-white rounded-lg w-full md:min-w-96 py-2">
+											<ul className="px-4 max-h-[38dvh] md:max-h-[30dvh] overflow-y-auto divide-y divide-black/15">
+												{searchHistory.map(
+													({ searchedOn, city, fullName }, index) => (
+														<Result
+															btnClassName="px-1"
+															showButtons={true}
+															city={city}
+															clickHandler={() => {
+																setSearchResult([]);
+																setShowBackdrop(false);
+																setQuery(fullName);
+																setCurrentCity(searchHistory[0].city);
+
+																setTimeout(() => {
+																	pushSearchHistoryToFront({
+																		searchedOn,
+																		city,
+																		fullName,
+																	});
+																}, 200);
+															}}
+															key={`${city.fullName}-${searchedOn}`}
+														/>
+													),
+												)}
+											</ul>
+										</div>
+									</motion.div>
+								)}
+							</AnimatePresence>
 							<AnimatePresence mode="wait">
 								{searchResult.length > 0 && (
 									<motion.div
@@ -135,28 +216,29 @@ export default function Search() {
 											{searchResult.length}{' '}
 											{searchResult.length > 1 ? 'cities' : 'city'} found
 										</h6>
-										<motion.ul
+										<div
 											key="search-results"
-											className="bg-white rounded-lg w-full md:min-w-96 py-2">
-											{searchResult.map((result) => (
-												<Result
-													city={result}
-													clickHandler={() => {
-														setQuery(
-															`${result.name}${
-																typeof result.state !== 'undefined'
-																	? `, ${result.state}`
-																	: ''
-															}, ${result.country}`,
-														);
-														setCurrentCity(result);
-														setSearchResult([]);
-														setShowBackdrop(false);
-													}}
-													key={`${result.lat},${result.lng}`}
-												/>
-											))}
-										</motion.ul>
+											className="bg-white rounded-lg w-full md:min-w-96 px-4 py-2 divide-y-2 divide-black/15">
+											<ul>
+												{searchResult.map((result) => (
+													<Result
+														btnClassName="px-1"
+														city={result}
+														clickHandler={() => {
+															setQuery(result.fullName);
+															setCurrentCity(result);
+															setSearchResult([]);
+															setShowBackdrop(false);
+
+															setTimeout(() => {
+																addSearchHistory(result);
+															}, 200);
+														}}
+														key={`${result.lat},${result.lon}`}
+													/>
+												))}
+											</ul>
+										</div>
 									</motion.div>
 								)}
 							</AnimatePresence>
