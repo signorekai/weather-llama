@@ -17,13 +17,21 @@ bun dev
 ```
 
 ## Target Features
-  1. Geocoding API
-    - Client-side cache
-  1. Current weather summary by location
-    - Grab user current location
-    - Client-side cache of API response
-  1. 5-day forecast by 3 hours by location
-    - Client-side cache of API response
-  1. Client-side search and history
-    - Allow for history deletion
-    - Prioritise prior searches to reduce hits on API
+
+1. Geocoding API
+
+   - Client-side cache
+
+1. Current weather summary by location
+
+   - Grab user current location
+   - Client-side cache of API response
+
+1. 5-day forecast by 3 hours by location
+
+   - Client-side cache of API response
+
+1. Client-side search and history
+
+   - Allow for history deletion
+   - Error message if no results returned
