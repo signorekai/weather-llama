@@ -1,4 +1,4 @@
-import { type City } from './City';
+import type { CityWithName, City } from './City';
 
 export interface AppState {
 	showBackdrop: boolean | null;
@@ -7,5 +7,5 @@ export interface AppState {
 
 export interface AppAction {
 	setShowBackdrop: (showBackdrop: boolean) => void;
-	setCurrentCity: (city: City) => void;
+	setCurrentCity: (city: CityWithName) => void;
 }
