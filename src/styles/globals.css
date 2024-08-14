@@ -1,4 +1,4 @@
-@import url("https://use.typekit.net/kth3zha.css");
+@import url('https://use.typekit.net/kth3zha.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,7 +18,7 @@
 }
 
 body {
-  @apply font-proxima-nova;
+  @apply font-proxima-nova text-base;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
