@@ -26,3 +26,4 @@ bun dev
     - Client-side cache of API response
   1. Client-side search and history
     - Allow for history deletion
+    - Prioritise prior searches to reduce hits on API
