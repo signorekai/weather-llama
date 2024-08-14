@@ -1,4 +1,4 @@
-import { addNameToCity } from '@/components/SearchBar';
+import { addNameToCity } from '@/app/api/geocoding/route';
 import type {
 	SearchHistory,
 	SearchHistoryAction,

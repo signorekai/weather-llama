@@ -37,15 +37,6 @@ function Result({
 	);
 }
 
-export const addNameToCity = (city: City): CityWithName => {
-	return {
-		...city,
-		fullName: `${city.name}${
-			typeof city.state !== 'undefined' ? `, ${city.state}` : ''
-		}, ${city.country}`,
-	};
-};
-
 export default function Search() {
 	const [query, setQuery] = useState('');
 	const [isFetching, setIsFetching] = useState(false);
