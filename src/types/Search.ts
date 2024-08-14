@@ -11,6 +11,7 @@ export interface SearchHistoryState {
 }
 
 export interface SearchHistoryAction {
-	add: (city: CityWithName) => void;
-	push: (searchHistory: SearchHistory) => void;
+	add: (entry: CityWithName) => void;
+	push: (entry: SearchHistory) => void;
+	delete: (timestamp: number, fullName: string) => void;
 }

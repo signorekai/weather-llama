@@ -13,29 +13,35 @@ export const useSearchHistoryStore = create<
 	persist(
 		(set, get) => ({
 			searchHistory: [],
-			add: (city) =>
+			add: (entry) =>
 				set(() => ({
 					searchHistory: [
 						{
-							fullName: city.fullName,
+							fullName: entry.fullName,
 							searchedOn: Date.now(),
-							city,
+							city: entry,
 						},
 						...get().searchHistory,
 					],
 				})),
-			push: (newHistory) =>
+			push: (entry) =>
 				set(() => {
-					console.log(get().searchHistory, newHistory);
 					return {
 						searchHistory: [
-							{ ...newHistory, searchedOn: Date.now() },
+							{ ...entry, searchedOn: Date.now() },
 							...get().searchHistory.filter(
-								(history) => history.searchedOn !== newHistory.searchedOn,
+								(history) => history.searchedOn !== entry.searchedOn,
 							),
 						],
 					};
 				}),
+			delete: (timestamp, fullName) =>
+				set(() => ({
+					searchHistory: get().searchHistory.filter(
+						(history) =>
+							history.searchedOn !== timestamp && history.fullName !== fullName,
+					),
+				})),
 		}),
 		{
 			name: 'search-history',

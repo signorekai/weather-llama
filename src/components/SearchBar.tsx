@@ -6,20 +6,25 @@ import { useAppStore } from '@/stores/App';
 import { useSearchHistoryStore } from '@/stores/SearchHistory';
 import { City, CityWithName } from '@/types/City';
 import TrashBtn from './TrashBtn';
+import debounce from 'lodash.debounce';
 
 function Result({
 	city,
 	className = '',
 	btnClassName = '',
 	clickHandler,
+	searchTimestamp = 0,
 	showButtons = false,
 }: Readonly<{
 	city: CityWithName;
 	className?: string;
 	btnClassName?: string;
 	clickHandler: () => void;
+	searchTimestamp?: number;
 	showButtons?: boolean;
 }>) {
+	const deleteSearchHistory = useSearchHistoryStore((state) => state.delete);
+
 	return (
 		<li className={`flex flex-row items-center ${className}`}>
 			<button
@@ -30,7 +35,11 @@ function Result({
 			</button>
 			{showButtons && (
 				<>
-					<TrashBtn clickHandler={() => {}} />
+					<TrashBtn
+						clickHandler={() => {
+							deleteSearchHistory(searchTimestamp, city.fullName);
+						}}
+					/>
 				</>
 			)}
 		</li>
@@ -55,9 +64,8 @@ export default function Search() {
 	const fetchCity = useCallback(async () => {
 		setIsFetching(true);
 		const res = await fetch(`/api/geocoding?city=${query}`);
-		const { data }: { data: City[] } = await res.json();
-		const dataWithName: CityWithName[] = data.map(addNameToCity);
-		setSearchResult(dataWithName);
+		const { data }: { data: CityWithName[] } = await res.json();
+		setSearchResult(data);
 		setIsFetching(false);
 	}, [query]);
 
@@ -93,12 +101,11 @@ export default function Search() {
 						const res = await fetch(
 							`/api/geocoding?lat=${position.coords.latitude}&lng=${position.coords.longitude}`,
 						);
-						const { data }: { data: City[] } = await res.json();
+						const { data }: { data: CityWithName[] } = await res.json();
 						if (data.length > 0) {
-							const dataWithName: CityWithName[] = data.map(addNameToCity);
-							addSearchHistory(dataWithName[0]);
-							setQuery(dataWithName[0].fullName);
-							setCurrentCity(dataWithName[0]);
+							addSearchHistory(data[0]);
+							setQuery(data[0].fullName);
+							setCurrentCity(data[0]);
 						}
 						setIsFetching(false);
 					});
@@ -171,21 +178,26 @@ export default function Search() {
 														<Result
 															btnClassName="px-1"
 															showButtons={true}
+															searchTimestamp={searchedOn}
 															city={city}
-															clickHandler={() => {
-																setSearchResult([]);
-																setShowBackdrop(false);
-																setQuery(fullName);
-																setCurrentCity(searchHistory[0].city);
+															clickHandler={debounce(
+																() => {
+																	setSearchResult([]);
+																	setShowBackdrop(false);
+																	setQuery(fullName);
+																	setCurrentCity(searchHistory[0].city);
 
-																setTimeout(() => {
-																	pushSearchHistoryToFront({
-																		searchedOn,
-																		city,
-																		fullName,
-																	});
-																}, 200);
-															}}
+																	setTimeout(() => {
+																		pushSearchHistoryToFront({
+																			searchedOn,
+																			city,
+																			fullName,
+																		});
+																	}, 200);
+																},
+																1000,
+																{ leading: true, trailing: false },
+															)}
 															key={`${city.fullName}-${searchedOn}`}
 														/>
 													),
@@ -215,16 +227,20 @@ export default function Search() {
 													<Result
 														btnClassName="px-1"
 														city={result}
-														clickHandler={() => {
-															setQuery(result.fullName);
-															setCurrentCity(result);
-															setSearchResult([]);
-															setShowBackdrop(false);
+														clickHandler={debounce(
+															() => {
+																setSearchResult([]);
+																setShowBackdrop(false);
+																setQuery(result.fullName);
+																setCurrentCity(result);
 
-															setTimeout(() => {
-																addSearchHistory(result);
-															}, 200);
-														}}
+																setTimeout(() => {
+																	addSearchHistory(result);
+																}, 200);
+															},
+															1000,
+															{ leading: true, trailing: false },
+														)}
 														key={`${result.lat},${result.lon}`}
 													/>
 												))}
