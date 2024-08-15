@@ -161,6 +161,9 @@ export default function Search() {
 									<motion.div key="search-results-history">
 										<h6 className="text-blue-light">Previous Searches</h6>
 										<SearchHistory
+											clickHandler={() => {
+												setSearchQuery('');
+											}}
 											searchHistory={filteredSearchHistory}
 											setSearchResult={setSearchResult}
 											setShowBackdrop={setShowBackdrop}
@@ -194,6 +197,7 @@ export default function Search() {
 																	setSearchResult([]);
 																	setShowBackdrop(false);
 																	setInputValue(result.fullName);
+																	setSearchQuery('');
 																	setCurrentCity(result);
 																	setHasError(false);
 																	setTimeout(() => {

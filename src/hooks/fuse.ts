@@ -8,39 +8,41 @@ export default function useFuse<T>({
 	fuseOptions,
 }: {
 	list: T[];
-	fuseOptions: IFuseOptions<T>;
+	fuseOptions: IFuseOptions<T> & { minLength: number };
 }): {
 	results: T[];
 	setSearchQuery: any;
 } {
 	const [query, setQuery] = useState('');
 
+	if (fuseOptions.hasOwnProperty('minLength') === false)
+		fuseOptions.minLength = 2;
+
 	const debouncedSetQuery = useCallback(
 		debounce((t) => setQuery(t), 200),
 		[],
 	);
 
-	// useEffect(() => {
-	// 	debouncedSetQuery(searchTerm);
-	// }, [debouncedSetQuery, searchTerm]);
-
 	const fuse = useMemo(() => {
 		return new Fuse(list, {
 			minMatchCharLength: 2,
+			threshold: 0.4,
 			...fuseOptions,
 		});
 	}, [list, fuseOptions]);
 
 	const results = useMemo(() => {
-		console.log(37);
-		return fuse.search(query);
-	}, [fuse, query]);
+		if (query.length < fuseOptions.minLength) {
+			return list;
+		} else {
+			const matches = fuse.search(query);
+			const processedMatches = matches.map(({ item }) => item);
+			return processedMatches;
+		}
+	}, [query, fuseOptions.minLength, list, fuse]);
 
-	const processedResults = results.map(({ item }) => item);
-
-	if (processedResults.length > 0) {
-		return { results: processedResults, setSearchQuery: debouncedSetQuery };
-	} else {
-		return { results: list, setSearchQuery: debouncedSetQuery };
-	}
+	return {
+		setSearchQuery: debouncedSetQuery,
+		results,
+	};
 }

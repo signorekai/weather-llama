@@ -13,12 +13,14 @@ export default function SearchHistory({
 	setShowBackdrop,
 	setQuery,
 	setHasError,
+	clickHandler = () => {},
 }: Readonly<{
 	searchHistory: SearchHistory[];
 	setSearchResult: React.Dispatch<React.SetStateAction<CityWithName[]>>;
 	setShowBackdrop: (showBackdrop: boolean) => void;
 	setQuery: React.Dispatch<React.SetStateAction<string>>;
 	setHasError: React.Dispatch<React.SetStateAction<boolean>>;
+	clickHandler?: () => void;
 }>) {
 	const [unshiftSearchHistory, deleteSearchHistory] = useSearchHistoryStore(
 		(state) => [state.push, state.delete],
@@ -36,6 +38,7 @@ export default function SearchHistory({
 							className={`block py-3 flex-1 text-left hover:opacity-50 default-transition px-1`}
 							onClick={debounce(
 								() => {
+									clickHandler();
 									setSearchResult([]);
 									setShowBackdrop(false);
 									setQuery(fullName);
