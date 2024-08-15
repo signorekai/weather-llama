@@ -193,6 +193,7 @@ export default function Search() {
 																	setShowBackdrop(false);
 																	setQuery(fullName);
 																	setCurrentCity(searchHistory[0].city);
+																	setHasError(false);
 
 																	setTimeout(() => {
 																		pushSearchHistoryToFront({
@@ -240,6 +241,7 @@ export default function Search() {
 																setShowBackdrop(false);
 																setQuery(result.fullName);
 																setCurrentCity(result);
+																setHasError(false);
 
 																setTimeout(() => {
 																	addSearchHistory(result);
