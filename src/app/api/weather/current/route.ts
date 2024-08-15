@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
 			{ status: 500 },
 		);
 	} else {
-		console.log(lat, lng);
 		try {
 			const data = await openWeather.getCurrentWeatherByGeoCoordinates(
 				parseFloat(lat),
