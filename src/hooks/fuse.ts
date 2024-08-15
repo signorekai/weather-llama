@@ -19,7 +19,9 @@ export default function useFuse<T>({
 		fuseOptions.minLength = 2;
 
 	const debouncedSetQuery = useCallback(
-		debounce((t) => setQuery(t), 200),
+		debounce((t) => {
+			setQuery(t);
+		}, 100),
 		[],
 	);
 
@@ -37,9 +39,15 @@ export default function useFuse<T>({
 		} else {
 			const matches = fuse.search(query);
 			const processedMatches = matches.map(({ item }) => item);
+
+			if (processedMatches.length === 0) {
+				return list;
+			}
+
 			return processedMatches;
 		}
-	}, [query, fuseOptions.minLength, list, fuse]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [query, list]);
 
 	return {
 		setSearchQuery: debouncedSetQuery,
