@@ -219,6 +219,10 @@ export default function Search() {
 																	setSearchQuery('');
 																	setCurrentCity(result);
 																	setHasError(false);
+																	if (pathname !== '/') {
+																		router.push('/');
+																	}
+
 																	setTimeout(() => {
 																		addSearchHistory(result);
 																	}, 200);
