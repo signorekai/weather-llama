@@ -106,7 +106,6 @@ export default function Search() {
 	return (
 		<>
 			<div
-				className=""
 				onFocus={() => {
 					setShowBackdrop(true);
 					setIsFocused(true);
@@ -155,10 +154,23 @@ export default function Search() {
 							initial={{ opacity: 0, translateY: 40, scale: 0.9 }}
 							animate={{ opacity: 1, translateY: 0, scale: 1 }}
 							exit={{ opacity: 0, translateY: 40, scale: 0.9 }}
-							className="fixed mt-8 left-0 lg:left-auto px-4 w-full lg:px-0 lg:w-auto">
+							className="fixed top-14 md:top-16 left-0 lg:left-auto px-4 w-full lg:px-0 lg:w-auto">
+							<AnimatePresence mode="wait">
+								{hasError && (
+									<motion.div
+										initial={{ opacity: 0, translateY: 40, scale: 0.9 }}
+										animate={{ opacity: 1, translateY: 0, scale: 1 }}
+										exit={{ opacity: 0, translateY: 40, scale: 0.9 }}
+										key="error-wrapper">
+										<Card className="!bg-red-dark text-white px-4.5 mt-4">
+											No results found! Please try searching for another city.
+										</Card>
+									</motion.div>
+								)}
+							</AnimatePresence>
 							<AnimatePresence mode="wait">
 								{filteredSearchHistory.length > 0 && (
-									<motion.div key="search-results-history">
+									<motion.div className="mt-4" key="search-results-history">
 										<h6 className="text-blue-light">Previous Searches</h6>
 										<SearchHistory
 											clickHandler={() => {
