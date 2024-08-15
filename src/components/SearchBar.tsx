@@ -9,6 +9,7 @@ import { useAppStore } from '@/stores/App';
 import { useSearchHistoryStore } from '@/stores/SearchHistory';
 import TrashBtn from './TrashBtn';
 import { Card, List, Row } from './Card';
+import SearchHistory from './SearchHistory';
 
 export default function Search() {
 	const [query, setQuery] = useState('');
@@ -20,6 +21,7 @@ export default function Search() {
 
 	const showBackdrop = useAppStore((state) => state.showBackdrop);
 	const setShowBackdrop = useAppStore((state) => state.setShowBackdrop);
+
 	const setCurrentCity = useAppStore((state) => state.setCurrentCity);
 
 	const searchHistory = useSearchHistoryStore((state) => state.searchHistory);
@@ -146,45 +148,13 @@ export default function Search() {
 								{searchHistory.length > 0 && (
 									<motion.div key="search-results-history">
 										<h6 className="text-blue-light">Previous Searches</h6>
-										<Card>
-											<List>
-												{searchHistory.map(
-													({ searchedOn, city, fullName }, index) => (
-														<Row
-															key={`${index}-${city.fullName}-${searchedOn}`}>
-															<button
-																tabIndex={0}
-																className={`block py-3 flex-1 text-left hover:opacity-50 default-transition px-1`}
-																onClick={debounce(
-																	() => {
-																		setSearchResult([]);
-																		setShowBackdrop(false);
-																		setQuery(fullName);
-																		setCurrentCity(searchHistory[0].city);
-																		setHasError(false);
-																		setTimeout(() => {
-																			unshiftSearchHistory({
-																				searchedOn,
-																				city,
-																				fullName,
-																			});
-																		}, 200);
-																	},
-																	1000,
-																	{ leading: true, trailing: false },
-																)}>
-																{fullName}
-															</button>
-															<TrashBtn
-																clickHandler={() => {
-																	deleteSearchHistory(searchedOn, fullName);
-																}}
-															/>
-														</Row>
-													),
-												)}
-											</List>
-										</Card>
+										<SearchHistory
+											searchHistory={searchHistory}
+											setSearchResult={setSearchResult}
+											setShowBackdrop={setShowBackdrop}
+											setQuery={setQuery}
+											setHasError={setHasError}
+										/>
 									</motion.div>
 								)}
 							</AnimatePresence>
