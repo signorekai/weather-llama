@@ -8,7 +8,7 @@ export default function useFuse<T>({
 	fuseOptions,
 }: {
 	list: T[];
-	fuseOptions: IFuseOptions<T> & { minLength: number };
+	fuseOptions: IFuseOptions<T> & { minLength?: number };
 }): {
 	results: T[];
 	setSearchQuery: any;
