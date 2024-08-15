@@ -27,9 +27,9 @@ export default function WeatherForecast({
 					initial={{ opacity: 0, translateX: 40 }}
 					animate={{ opacity: 1, translateX: 0 }}
 					exit={{ opacity: 0, translateX: -40 }}
-					className={`max-w-screen-sm w-full ${className}`}
+					className={`lg:max-w-screen-sm w-full ${className}`}
 					key={`${currentCity?.fullName}-${forecastWeather[0].localDate}`}>
-					<Card className="px-5 pt-4 pb-1">
+					<Card className="px-5 pt-4 pb-1 md:min-w-0">
 						<h6 className="mb-0">{forecastWeather[0].localDate}</h6>
 						<List className="!px-0 max-h-none md:max-h-none !overflow-hidden">
 							{forecastWeather.map((forecast) => (
@@ -50,7 +50,7 @@ export default function WeatherForecast({
 												width={64}
 												height={64}
 												alt={`Forecast weather at ${forecast.lt}: ${forecast?.weather[0].description}`}
-												src={`https://openweathermap.org/img/wn/${forecast?.weather[0].icon}@2x.png`}
+												src={`https://openweathermap.org/img/wn/${forecast?.weather[0].icon}@4x.png`}
 											/>
 										</div>
 									</span>

@@ -36,7 +36,7 @@ export default function WeatherToday({
 					initial={{ opacity: 0, translateX: 40 }}
 					animate={{ opacity: 1, translateX: 0 }}
 					exit={{ opacity: 0, translateX: -40 }}
-					className="max-w-screen-sm w-full"
+					className="lg:max-w-screen-sm w-full"
 					key={currentCity?.fullName}>
 					<Card className="px-5 pt-4 pb-1">
 						<h6 className="mb-0">
@@ -72,7 +72,7 @@ export default function WeatherToday({
 											width={100}
 											height={100}
 											alt={`Current weather: ${currentWeather?.weather[0].description}`}
-											src={`https://openweathermap.org/img/wn/${currentWeather?.weather[0].icon}@2x.png`}
+											src={`https://openweathermap.org/img/wn/${currentWeather?.weather[0].icon}@4x.png`}
 										/>
 									</div>
 									<div>
@@ -175,16 +175,16 @@ export default function WeatherToday({
 													/>
 												</span>
 												<span className="opacity-75 w-1/3 flex flex-row items-center justify-end text-right">
+													{forecast.weather[0].description}
 													<div className="w-12 h-12 md:w-16 md:h-16">
 														<Image
 															unoptimized
 															width={64}
 															height={64}
 															alt={`Forecast weather at ${forecast.lt}: ${forecast?.weather[0].description}`}
-															src={`https://openweathermap.org/img/wn/${forecast?.weather[0].icon}@2x.png`}
+															src={`https://openweathermap.org/img/wn/${forecast?.weather[0].icon}@4x.png`}
 														/>
 													</div>
-													{forecast.weather[0].description}
 												</span>
 											</Row>
 										),
