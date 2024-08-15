@@ -3,8 +3,9 @@ import { create } from 'zustand';
 
 export const useAppStore = create<AppState & AppAction>()((set) => ({
 	showBackdrop: false,
-	setShowBackdrop: (showBackdrop) =>
-		set(() => ({ showBackdrop: showBackdrop })),
 	currentCity: null,
+	units: 'metric',
+	setShowBackdrop: (showBackdrop) => set(() => ({ showBackdrop })),
 	setCurrentCity: (city) => set(() => ({ currentCity: city })),
+	setUnits: (units) => set(() => ({ units })),
 }));
