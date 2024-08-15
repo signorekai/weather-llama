@@ -1,14 +1,6 @@
 import { type NextRequest } from 'next/server';
-import type { City, CityWithName } from '@/types/City';
-
-export const addNameToCity = (city: City): CityWithName => {
-	return {
-		...city,
-		fullName: `${city.name}${
-			typeof city.state !== 'undefined' ? `, ${city.state}` : ''
-		}, ${city.country}`,
-	};
-};
+import type { City } from '@/types/City';
+import { addNameToCity } from '@/app/helpers';
 
 export async function GET(request: NextRequest) {
 	const limit = 10;

@@ -1,4 +1,4 @@
-import { addNameToCity } from '@/app/api/geocoding/route';
+import { addNameToCity } from '@/app/helpers';
 import type {
 	SearchHistory,
 	SearchHistoryAction,
