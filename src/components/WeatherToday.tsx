@@ -4,13 +4,14 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { DateTime } from 'luxon';
 import Image from 'next/image';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { Card, List, Row } from '@/components/Card';
 import { useAppStore } from '@/stores/App';
-import Temperature from './Temperature';
-import useUnits from '@/hooks/units';
+import useUnits, { presetUnits } from '@/hooks/units';
 import { Forecast } from '@/types/Forecast';
-import { AnimatePresence, motion } from 'framer-motion';
+import Temperature from './Temperature';
+import Distance from './Distance';
 
 export default function WeatherToday({
 	forecastWeather,
@@ -26,7 +27,7 @@ export default function WeatherToday({
 		state.currentCity,
 	]);
 
-	const presetUnits = useUnits();
+	const unitsInUse = useUnits();
 	const dt = DateTime.now();
 
 	return (
@@ -63,7 +64,7 @@ export default function WeatherToday({
 						<h3 className="inline-block min-w-52">
 							{currentCity?.fullName || <Skeleton />}
 						</h3>
-						<div className="flex flex-row items-center gap-x-3">
+						<div className="flex flex-row items-center md:justify-center gap-x-3">
 							{currentWeather?.weather[0] ? (
 								<>
 									<div className="w-[100px] h-[100px]">
@@ -75,7 +76,7 @@ export default function WeatherToday({
 											src={`https://openweathermap.org/img/wn/${currentWeather?.weather[0].icon}@4x.png`}
 										/>
 									</div>
-									<div>
+									<div className="pr-8">
 										<h2 className="">
 											<Temperature
 												units={units}
@@ -129,7 +130,7 @@ export default function WeatherToday({
 												/>
 											</span>
 											{currentWeather.wind.speed}
-											{presetUnits.speed}
+											{presetUnits.speed['metric']}
 										</h2>
 									</>
 								) : (
@@ -141,11 +142,10 @@ export default function WeatherToday({
 									<>
 										<h6 className="mb-0">Visibility</h6>
 										<h2 className="responsive">
-											{currentWeather.visibility > 1000
-												? `${Math.floor(currentWeather.visibility / 1000)}k${
-														presetUnits.visibility
-												  }`
-												: `${currentWeather.visibility}${presetUnits.visibility}`}
+											<Distance
+												units={units}
+												value={currentWeather.visibility}
+											/>
 										</h2>
 									</>
 								) : (
