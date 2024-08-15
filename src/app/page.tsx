@@ -9,7 +9,6 @@ import { useState, useCallback, useEffect } from 'react';
 import WeatherToday from '@/components/WeatherToday';
 import { useAppStore } from '@/stores/App';
 import { Forecast, SortedForecast } from '@/types/Forecast';
-import { Card } from '@/components/Card';
 import WeatherForecast from '@/components/WeatherForecast';
 
 export default function Home() {
@@ -79,21 +78,33 @@ export default function Home() {
 	useEffect(() => {
 		if (currentCity) {
 			const fetchData = async () => {
-				const currentRes = await fetch(
-					`/api/weather/current?lat=${currentCity?.lat}&lng=${currentCity?.lon}`,
-				);
-				const current: { data: CurrentResponse } = await currentRes.json();
-				setCurrentWeather(current.data);
+				try {
+					const currentRes = await fetch(
+						`/api/weather/current?lat=${currentCity?.lat}&lng=${currentCity?.lon}`,
+					);
+					const current: { data: CurrentResponse } = await currentRes.json();
+					setCurrentWeather(current.data);
 
-				const forecastRes = await fetch(
-					`/api/weather/forecast?lat=${currentCity?.lat}&lng=${currentCity?.lon}`,
-				);
-				const forecast: { data: ThreeHourResponse } = await forecastRes.json();
-				fileForecasts({ data: forecast.data, timezone: current.data.timezone });
+					const forecastRes = await fetch(
+						`/api/weather/forecast?lat=${currentCity?.lat}&lng=${currentCity?.lon}`,
+					);
+					const forecast: { data: ThreeHourResponse } =
+						await forecastRes.json();
+					fileForecasts({
+						data: forecast.data,
+						timezone: current.data.timezone,
+					});
+				} catch (error) {}
 			};
 			fetchData();
 		}
 	}, [currentCity, fileForecasts]);
+
+	useEffect(() => {
+		setTimeout(() => {
+			window.scrollTo(0, 0);
+		}, 200);
+	}, [currentCity]);
 
 	return (
 		<main className="flex flex-1 flex-col items-center justify-between p-4 md:p-8">
@@ -101,17 +112,20 @@ export default function Home() {
 				currentWeather={currentWeather}
 				forecastWeather={forecastWeather}
 			/>
-			{forecastWeather &&
-				Object.keys(forecastWeather)
-					.slice(1)
-					.filter((k) => forecastWeather[k].length > 0)
-					.map((k) => (
-						<WeatherForecast
-							className="mt-4"
-							key={k}
-							forecastWeather={forecastWeather[k]}
-						/>
-					))}
+			{forecastWeather && (
+				<div className="grid grid-cols-1 gap-x-2 gap-y-2 mt-2 items-center w-full max-w-screen-lg mx-auto">
+					{Object.keys(forecastWeather)
+						.slice(1)
+						.filter((k) => forecastWeather[k].length > 0)
+						.map((k) => (
+							<WeatherForecast
+								className="mx-auto"
+								key={k}
+								forecastWeather={forecastWeather[k]}
+							/>
+						))}
+				</div>
+			)}
 		</main>
 	);
 }
