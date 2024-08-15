@@ -61,7 +61,6 @@ export default function Search() {
 				if (searchHistory.length > 0) {
 					setQuery(searchHistory[0].fullName);
 					unshiftSearchHistory(searchHistory[0]);
-					setQuery(searchHistory[0].fullName);
 					setCurrentCity(searchHistory[0].city);
 				} else if ('geolocation' in navigator) {
 					// grab device lat/lon
@@ -144,41 +143,43 @@ export default function Search() {
 									<motion.div key="search-results-history">
 										<h6 className="text-blue-light">Previous Searches</h6>
 										<Card>
-											{searchHistory.map(
-												({ searchedOn, city, fullName }, index) => (
-													<Row key={`${index}-${city.fullName}-${searchedOn}`}>
-														<button
-															tabIndex={0}
-															className={`block py-3 flex-1 text-left hover:opacity-50 default-transition px-1`}
-															onClick={debounce(
-																() => {
-																	setSearchResult([]);
-																	setShowBackdrop(false);
-																	setQuery(fullName);
-																	setCurrentCity(searchHistory[0].city);
-																	setHasError(false);
-
-																	setTimeout(() => {
-																		unshiftSearchHistory({
-																			searchedOn,
-																			city,
-																			fullName,
-																		});
-																	}, 200);
-																},
-																1000,
-																{ leading: true, trailing: false },
-															)}>
-															{fullName}
-														</button>
-														<TrashBtn
-															clickHandler={() => {
-																deleteSearchHistory(searchedOn, fullName);
-															}}
-														/>
-													</Row>
-												),
-											)}
+											<List>
+												{searchHistory.map(
+													({ searchedOn, city, fullName }, index) => (
+														<Row
+															key={`${index}-${city.fullName}-${searchedOn}`}>
+															<button
+																tabIndex={0}
+																className={`block py-3 flex-1 text-left hover:opacity-50 default-transition px-1`}
+																onClick={debounce(
+																	() => {
+																		setSearchResult([]);
+																		setShowBackdrop(false);
+																		setQuery(fullName);
+																		setCurrentCity(searchHistory[0].city);
+																		setHasError(false);
+																		setTimeout(() => {
+																			unshiftSearchHistory({
+																				searchedOn,
+																				city,
+																				fullName,
+																			});
+																		}, 200);
+																	},
+																	1000,
+																	{ leading: true, trailing: false },
+																)}>
+																{fullName}
+															</button>
+															<TrashBtn
+																clickHandler={() => {
+																	deleteSearchHistory(searchedOn, fullName);
+																}}
+															/>
+														</Row>
+													),
+												)}
+											</List>
 										</Card>
 									</motion.div>
 								)}
@@ -196,30 +197,31 @@ export default function Search() {
 											{searchResult.length > 1 ? 'cities' : 'city'} found
 										</h6>
 										<Card>
-											{searchResult.map((result) => (
-												<Row key={`${result.lat},${result.lon}`}>
-													<button
-														tabIndex={0}
-														className={`block py-3 flex-1 text-left hover:opacity-50 default-transition px-1`}
-														onClick={debounce(
-															() => {
-																setSearchResult([]);
-																setShowBackdrop(false);
-																setQuery(result.fullName);
-																setCurrentCity(result);
-																setHasError(false);
-
-																setTimeout(() => {
-																	addSearchHistory(result);
-																}, 200);
-															},
-															1000,
-															{ leading: true, trailing: false },
-														)}>
-														{result.fullName}
-													</button>
-												</Row>
-											))}
+											<List>
+												{searchResult.map((result) => (
+													<Row key={`${result.lat},${result.lon}`}>
+														<button
+															tabIndex={0}
+															className={`block py-3 flex-1 text-left hover:opacity-50 default-transition px-1`}
+															onClick={debounce(
+																() => {
+																	setSearchResult([]);
+																	setShowBackdrop(false);
+																	setQuery(result.fullName);
+																	setCurrentCity(result);
+																	setHasError(false);
+																	setTimeout(() => {
+																		addSearchHistory(result);
+																	}, 200);
+																},
+																1000,
+																{ leading: true, trailing: false },
+															)}>
+															{result.fullName}
+														</button>
+													</Row>
+												))}
+											</List>
 										</Card>
 									</motion.div>
 								)}
