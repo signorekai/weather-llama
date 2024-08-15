@@ -37,10 +37,16 @@ export const useSearchHistoryStore = create<
 				}),
 			delete: (timestamp, fullName) =>
 				set(() => ({
-					searchHistory: get().searchHistory.filter(
-						(history) =>
-							history.searchedOn !== timestamp && history.fullName !== fullName,
-					),
+					searchHistory: get().searchHistory.filter((history) => {
+						if (
+							history.searchedOn === timestamp &&
+							history.fullName === fullName
+						) {
+							return false;
+						} else {
+							return true;
+						}
+					}),
 				})),
 		}),
 		{
