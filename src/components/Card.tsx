@@ -1,5 +1,10 @@
-export const Card = ({ children }: Readonly<{ children: React.ReactNode }>) => (
-	<div className="bg-white rounded-lg w-full md:min-w-96 py-2">{children}</div>
+export const Card = ({
+	children,
+	className = '',
+}: Readonly<{ children: React.ReactNode; className?: string }>) => (
+	<div className={`bg-white rounded-lg w-full md:min-w-96 py-2 ${className}`}>
+		{children}
+	</div>
 );
 
 export const List = ({
