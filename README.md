@@ -2,6 +2,8 @@ This is a sample [`Next.js`](https://nextjs.org) web app that utilises [`Open We
 
 This repository uses the [`Gitmoji`](https://gitmoji.dev) emoji guide for commit messages.
 
+[`Demo`](https://weather-llama.vercel.app)
+
 ## Getting Started
 
 First, run the development server:
