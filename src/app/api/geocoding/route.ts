@@ -19,23 +19,20 @@ export async function GET(request: NextRequest) {
 	const lat = searchParams.get('lat');
 	const lng = searchParams.get('lng');
 
-	console.log(16, cityName, limit, key, lat, lng);
+	let url = '';
 
 	if (cityName && (!lat || !lng)) {
-		const res = await fetch(
-			`http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${key}`,
-		);
-		const data = await res.json();
-		const processedData = data.map((city: City) => addNameToCity(city));
-		return Response.json({ data: processedData });
+		url = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${key}`;
 	} else if (lat && lng) {
-		const res = await fetch(
-			`http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lng}&limit=${limit}&appid=${key}`,
-		);
+		url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lng}&limit=${limit}&appid=${key}`;
+	}
+
+	if (url.length === 0) {
+		return Response.json({});
+	} else {
+		const res = await fetch(url);
 		const data = await res.json();
 		const processedData = data.map((city: City) => addNameToCity(city));
 		return Response.json({ data: processedData });
-	} else {
-		return Response.json({});
 	}
 }
