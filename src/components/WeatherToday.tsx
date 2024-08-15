@@ -27,7 +27,7 @@ export default function WeatherToday() {
 		if (currentCity) {
 			const fetchData = async () => {
 				const res = await fetch(
-					`/api/weather?lat=${currentCity?.lat}&lng=${currentCity?.lon}`,
+					`/api/weather/current?lat=${currentCity?.lat}&lng=${currentCity?.lon}`,
 				);
 				const { data }: { data: CurrentResponse } = await res.json();
 				setCurrentWeather(data);
