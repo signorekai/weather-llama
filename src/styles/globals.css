@@ -46,6 +46,14 @@ body {
 	}
 }
 
+@layer components {
+	.credits {
+		a {
+			@apply font-bold;
+		}
+	}
+}
+
 @layer utilities {
 	.default-transition {
 		@apply transition-all duration-200 ease-in-out;

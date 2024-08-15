@@ -126,6 +126,55 @@ export default function Home() {
 						))}
 				</div>
 			)}
+			<div className="mt-6 text-xs credits">
+				<h6 className="mb-0">Image credits</h6>
+				<ul className="opacity-35">
+					<li>
+						Llama by havid ika from{' '}
+						<a
+							href="https://thenounproject.com/icon/llama-4171316/"
+							target="_blank"
+							rel="noopener noreferrer"
+							title="Llama Icons">
+							Noun Project
+						</a>{' '}
+						(CC BY 3.0)
+					</li>
+					<li>
+						spinner by Zach Bogart from{' '}
+						<a
+							href="https://thenounproject.com/icon/spinner-3644820/"
+							target="_blank"
+							rel="noopener noreferrer"
+							title="spinner Icons">
+							Noun Project
+						</a>{' '}
+						(CC BY 3.0)
+					</li>
+					<li>
+						Trash by Sebastiaan van Veen from{' '}
+						<a
+							href="https://thenounproject.com/browse/icons/term/trash/"
+							target="_blank"
+							rel="noopener noreferrer"
+							title="Trash Icons">
+							Noun Project
+						</a>{' '}
+						(CC BY 3.0)
+					</li>
+					<li>
+						wind direction by Komardews from{' '}
+						<a
+							href="https://thenounproject.com/browse/icons/term/wind-direction/"
+							target="_blank"
+							rel="noopener noreferrer"
+							title="wind direction Icons">
+							Noun Project
+						</a>{' '}
+						(CC BY 3.0)
+					</li>
+				</ul>
+			</div>
 		</main>
 	);
 }
