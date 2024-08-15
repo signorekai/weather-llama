@@ -76,9 +76,9 @@ export default function Search() {
 	}, [searchHistory, setCurrentCity]);
 
 	useEffect(() => {
-		useSearchHistoryStore.persist.rehydrate();
 		const unsub = useSearchHistoryStore.persist.onFinishHydration(
 			({ searchHistory }) => {
+				console.log(82);
 				if (searchHistory.length > 0) {
 					setInputValue(searchHistory[0].fullName);
 					unshiftSearchHistory(searchHistory[0]);
@@ -101,6 +101,7 @@ export default function Search() {
 				}
 			},
 		);
+		useSearchHistoryStore.persist.rehydrate();
 		return () => {
 			unsub();
 		};
