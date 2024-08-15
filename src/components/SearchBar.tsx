@@ -6,46 +6,7 @@ import { useAppStore } from '@/stores/App';
 import { useSearchHistoryStore } from '@/stores/SearchHistory';
 import { City, CityWithName } from '@/types/City';
 import TrashBtn from './TrashBtn';
-import debounce from 'lodash.debounce';
-import { Card, Row } from './Card';
-
-function Result({
-	city,
-	className = '',
-	btnClassName = '',
-	clickHandler,
-	searchTimestamp = 0,
-	showButtons = false,
-}: Readonly<{
-	city: CityWithName;
-	className?: string;
-	btnClassName?: string;
-	clickHandler: () => void;
-	searchTimestamp?: number;
-	showButtons?: boolean;
-}>) {
-	const deleteSearchHistory = useSearchHistoryStore((state) => state.delete);
-
-	return (
-		<li className={`flex flex-row items-center ${className}`}>
-			<button
-				tabIndex={0}
-				className={`block py-3 flex-1 text-left hover:opacity-50 default-transition ${btnClassName}`}
-				onClick={clickHandler}>
-				{city.fullName}
-			</button>
-			{showButtons && (
-				<>
-					<TrashBtn
-						clickHandler={() => {
-							deleteSearchHistory(searchTimestamp, city.fullName);
-						}}
-					/>
-				</>
-			)}
-		</li>
-	);
-}
+import { Card, List, Row } from './Card';
 
 export default function Search() {
 	const [query, setQuery] = useState('');
