@@ -21,7 +21,7 @@ export default function Modal() {
 					onClick={() => {
 						setShowBackdrop(false);
 					}}
-					className="fixed w-screen h-screen top-0 left-0 z-30 bg-black/40 backdrop-blur-sm"></motion.div>
+					className="fixed w-screen h-screen top-0 left-0 z-30 bg-black/40 dark:bg-black/90 backdrop-blur-sm"></motion.div>
 			)}
 		</AnimatePresence>
 	);

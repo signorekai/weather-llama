@@ -24,6 +24,12 @@ OPEN_WEATHER_KEY=<API_KEY> # sign up for a key here https://openweathermap.org/
 
 ## Target Features
 
+1. UI
+
+   - ~~Toggle between imperial and metric units via tapping of temperature~~
+   - ~~Animations~~
+   - ~~Null state skeleton loader~~
+
 1. ~~Geocoding API~~
 
    - ~~Client-side cache~~
@@ -35,6 +41,7 @@ OPEN_WEATHER_KEY=<API_KEY> # sign up for a key here https://openweathermap.org/
 
 1. 5-day forecast by 3 hours by location
 
+   - ~~Timezone awareness for classification of forecasts~~
    - Client-side cache of API response
 
 1. Client-side search and history

@@ -7,7 +7,7 @@ export default function TrashBtn({
 }>) {
 	return (
 		<button
-			className={`w-9 h-9 p-2 text-black/30 rounded-full bg-blue-mid/10 hover:bg-blue-mid hover:text-white default-transition ${className}`}
+			className={`w-9 h-9 p-2 text-black/30 dark:text-white/30 rounded-full bg-blue-mid/10 hover:bg-blue-mid dark:bg-blue-light/20 hover:text-white default-transition ${className}`}
 			onClick={clickHandler}>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"

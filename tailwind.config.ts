@@ -35,10 +35,16 @@ const config: Config = {
 			current: 'currentColor',
 			transparent: 'transparent',
 			white: '#f9f9f9',
+			grey: {
+				DEFAULT: '#e9e9e9',
+				dark: '#292929',
+			},
 			black: '#000',
 			blue: {
 				light: '#dCe5eB',
 				mid: '#184792',
+				'3/4': '#05104d',
+				dark: '#02082c',
 			},
 			red: {
 				DEFAULT: '#ff5555',

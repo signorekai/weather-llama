@@ -10,9 +10,14 @@ import WeatherToday from '@/components/WeatherToday';
 import { useAppStore } from '@/stores/App';
 import { Forecast, SortedForecast } from '@/types/Forecast';
 import WeatherForecast from '@/components/WeatherForecast';
+import { SkeletonTheme } from 'react-loading-skeleton';
 
 export default function Home() {
-	const [currentCity] = useAppStore((state) => [state.currentCity]);
+	const [currentCity, darkMode, setDarkMode] = useAppStore((state) => [
+		state.currentCity,
+		state.darkMode,
+		state.setDarkMode,
+	]);
 
 	const [currentWeather, setCurrentWeather] = useState<CurrentResponse | null>(
 		null,
@@ -21,6 +26,16 @@ export default function Home() {
 	const [forecastWeather, setForecastWeather] = useState<SortedForecast | null>(
 		null,
 	);
+
+	useEffect(() => {
+		window
+			.matchMedia('(prefers-color-scheme: dark)')
+			.addEventListener('change', (event: any) => {
+				setDarkMode(event.matches);
+			});
+
+		setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+	}, []);
 
 	const fileForecasts = useCallback(
 		({ data, timezone }: { data: ThreeHourResponse; timezone: number }) => {
@@ -106,12 +121,33 @@ export default function Home() {
 		}, 200);
 	}, [currentCity]);
 
+	const skeletonColours = {
+		light: {
+			base: '#ebebeb',
+			highlight: '#f5f5f5',
+		},
+		dark: {
+			base: '#333',
+			highlight: '#454545',
+		},
+	};
+
 	return (
 		<main className="flex flex-1 flex-col items-center justify-between p-4 md:p-8">
-			<WeatherToday
-				currentWeather={currentWeather}
-				forecastWeather={forecastWeather}
-			/>
+			<SkeletonTheme
+				highlightColor={
+					darkMode
+						? skeletonColours.dark.highlight
+						: skeletonColours.light.highlight
+				}
+				baseColor={
+					darkMode ? skeletonColours.dark.base : skeletonColours.light.base
+				}>
+				<WeatherToday
+					currentWeather={currentWeather}
+					forecastWeather={forecastWeather}
+				/>
+			</SkeletonTheme>
 			{forecastWeather && (
 				<div className="grid grid-cols-1 gap-x-2 gap-y-2 mt-2 items-center w-full max-w-screen-lg mx-auto">
 					{Object.keys(forecastWeather)

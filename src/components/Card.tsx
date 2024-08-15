@@ -3,7 +3,7 @@ export const Card = ({
 	className = '',
 }: Readonly<{ children: React.ReactNode; className?: string }>) => (
 	<div
-		className={`bg-white rounded-lg w-full md:min-w-96 py-2 relative ${className}`}>
+		className={`bg-white dark:bg-blue-3/4 dark:text-grey rounded-lg w-full md:min-w-96 py-2 relative ${className}`}>
 		{children}
 	</div>
 );
@@ -13,7 +13,7 @@ export const List = ({
 	className = '',
 }: Readonly<{ children: React.ReactNode; className?: string }>) => (
 	<ul
-		className={`px-4 max-h-[38dvh] md:max-h-[30dvh] overflow-y-auto divide-y divide-black/15 ${className}`}>
+		className={`px-4 max-h-[38dvh] md:max-h-[30dvh] overflow-y-auto divide-y divide-black/15 dark:divide-white/15 ${className}`}>
 		{children}
 	</ul>
 );
