@@ -52,7 +52,7 @@ body {
 	}
 
 	.input-has-error {
-		outline: solid 3px #d56978;
+		outline: solid 3px rgb(186, 5, 5);
 		@apply text-red;
 	}
 
