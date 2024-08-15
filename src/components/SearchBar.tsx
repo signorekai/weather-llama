@@ -40,7 +40,11 @@ export default function Search() {
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		fetchCity();
+		if (query.length === 0) {
+			setSearchResult([]);
+		} else {
+			fetchCity();
+		}
 	};
 
 	useEffect(() => {
