@@ -1,11 +1,11 @@
 import debounce from 'lodash.debounce';
 
 import type { SearchHistory } from '@/types/Search';
+import { CityWithName } from '@/types/City';
 import { useSearchHistoryStore } from '@/stores/SearchHistory';
 import { useAppStore } from '@/stores/App';
 import { Card, List, Row } from './Card';
 import TrashBtn from './TrashBtn';
-import { CityWithName } from '@/types/City';
 
 export default function SearchHistory({
 	searchHistory,
@@ -20,8 +20,9 @@ export default function SearchHistory({
 	setQuery: React.Dispatch<React.SetStateAction<string>>;
 	setHasError: React.Dispatch<React.SetStateAction<boolean>>;
 }>) {
-	const unshiftSearchHistory = useSearchHistoryStore((state) => state.push);
-	const deleteSearchHistory = useSearchHistoryStore((state) => state.delete);
+	const [unshiftSearchHistory, deleteSearchHistory] = useSearchHistoryStore(
+		(state) => [state.push, state.delete],
+	);
 
 	const setCurrentCity = useAppStore((state) => state.setCurrentCity);
 

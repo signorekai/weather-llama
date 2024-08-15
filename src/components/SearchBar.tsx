@@ -9,6 +9,7 @@ import { useAppStore } from '@/stores/App';
 import { useSearchHistoryStore } from '@/stores/SearchHistory';
 import { Card, List, Row } from './Card';
 import SearchHistory from './SearchHistory';
+import useFuse from '@/hooks/fuse';
 
 export default function Search() {
 	const [query, setQuery] = useState('');
@@ -31,6 +32,13 @@ export default function Search() {
 			state.add,
 			state.push,
 		]);
+
+	let { results: filteredSearchHistory, setSearchQuery } = useFuse({
+		list: [...searchHistory],
+		fuseOptions: {
+			keys: ['fullName'],
+		},
+	});
 
 	const fetchCity = useCallback(async () => {
 		setIsFetching(true);
@@ -114,6 +122,7 @@ export default function Search() {
 						value={query}
 						onChange={(e) => {
 							setQuery(e.target.value);
+							setSearchQuery(e.target.value);
 							setHasError(false);
 						}}
 					/>
@@ -148,11 +157,11 @@ export default function Search() {
 							exit={{ opacity: 0, translateY: 40, scale: 0.9 }}
 							className="fixed mt-8 left-0 lg:left-auto px-4 w-full lg:px-0 lg:w-auto">
 							<AnimatePresence mode="wait">
-								{searchHistory.length > 0 && (
+								{filteredSearchHistory.length > 0 && (
 									<motion.div key="search-results-history">
 										<h6 className="text-blue-light">Previous Searches</h6>
 										<SearchHistory
-											searchHistory={searchHistory}
+											searchHistory={filteredSearchHistory}
 											setSearchResult={setSearchResult}
 											setShowBackdrop={setShowBackdrop}
 											setQuery={setQuery}
