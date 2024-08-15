@@ -6,7 +6,7 @@ export default function Header() {
 	return (
 		<>
 			<Modal />
-			<div className="bg-white px-4 py-2 fixed w-full z-50 flex flex-row justify-between items-center shadow-xl">
+			<div className="bg-white px-4 py-2 sticky top-0 w-full z-50 flex flex-row justify-between items-center shadow-xl">
 				<div className="w-12 h-8 md:w-20 md:h-12 overflow-hidden">
 					<svg
 						className="text-blue-mid w-12 h-12 md:w-20 md:h-20"
