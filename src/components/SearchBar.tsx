@@ -12,7 +12,7 @@ import SearchHistory from './SearchHistory';
 import useFuse from '@/hooks/fuse';
 
 export default function Search() {
-	const [query, setQuery] = useState('');
+	const [inputValue, setInputValue] = useState('');
 	const [isFetching, setIsFetching] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
 	const [hasError, setHasError] = useState(false);
@@ -42,18 +42,18 @@ export default function Search() {
 
 	const fetchCity = useCallback(async () => {
 		setIsFetching(true);
-		const res = await fetch(`/api/geocoding?city=${query}`);
+		const res = await fetch(`/api/geocoding?city=${inputValue}`);
 		const { data }: { data: CityWithName[] } = await res.json();
 		setSearchResult(data);
 		if (data.length === 0) {
 			setHasError(true);
 		}
 		setIsFetching(false);
-	}, [query]);
+	}, [inputValue]);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (query.length === 0) {
+		if (inputValue.length === 0) {
 			setSearchResult([]);
 		} else {
 			fetchCity();
@@ -66,7 +66,7 @@ export default function Search() {
 
 	useEffect(() => {
 		if (searchHistory.length > 0) {
-			setQuery(searchHistory[0].fullName);
+			setInputValue(searchHistory[0].fullName);
 			setCurrentCity(searchHistory[0].city);
 		}
 	}, [searchHistory, setCurrentCity]);
@@ -76,7 +76,7 @@ export default function Search() {
 		const unsub = useSearchHistoryStore.persist.onFinishHydration(
 			({ searchHistory }) => {
 				if (searchHistory.length > 0) {
-					setQuery(searchHistory[0].fullName);
+					setInputValue(searchHistory[0].fullName);
 					unshiftSearchHistory(searchHistory[0]);
 					setCurrentCity(searchHistory[0].city);
 				} else if ('geolocation' in navigator) {
@@ -89,7 +89,7 @@ export default function Search() {
 						const { data }: { data: CityWithName[] } = await res.json();
 						if (data.length > 0) {
 							addSearchHistory(data[0]);
-							setQuery(data[0].fullName);
+							setInputValue(data[0].fullName);
 							setCurrentCity(data[0]);
 						}
 						setIsFetching(false);
@@ -119,9 +119,9 @@ export default function Search() {
 						placeholder="Search country or city here..."
 						ref={inputRef}
 						type="text"
-						value={query}
+						value={inputValue}
 						onChange={(e) => {
-							setQuery(e.target.value);
+							setInputValue(e.target.value);
 							setSearchQuery(e.target.value);
 							setHasError(false);
 						}}
@@ -164,7 +164,7 @@ export default function Search() {
 											searchHistory={filteredSearchHistory}
 											setSearchResult={setSearchResult}
 											setShowBackdrop={setShowBackdrop}
-											setQuery={setQuery}
+											setQuery={setInputValue}
 											setHasError={setHasError}
 										/>
 									</motion.div>
@@ -193,7 +193,7 @@ export default function Search() {
 																() => {
 																	setSearchResult([]);
 																	setShowBackdrop(false);
-																	setQuery(result.fullName);
+																	setInputValue(result.fullName);
 																	setCurrentCity(result);
 																	setHasError(false);
 																	setTimeout(() => {
