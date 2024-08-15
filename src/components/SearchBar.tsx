@@ -7,6 +7,7 @@ import { useSearchHistoryStore } from '@/stores/SearchHistory';
 import { City, CityWithName } from '@/types/City';
 import TrashBtn from './TrashBtn';
 import debounce from 'lodash.debounce';
+import { Card, Row } from './Card';
 
 function Result({
 	city,
@@ -60,7 +61,8 @@ export default function Search() {
 
 	const searchHistory = useSearchHistoryStore((state) => state.searchHistory);
 	const addSearchHistory = useSearchHistoryStore((state) => state.add);
-	const pushSearchHistoryToFront = useSearchHistoryStore((state) => state.push);
+	const unshiftSearchHistory = useSearchHistoryStore((state) => state.push);
+	const deleteSearchHistory = useSearchHistoryStore((state) => state.delete);
 
 	const fetchCity = useCallback(async () => {
 		setIsFetching(true);
@@ -95,7 +97,7 @@ export default function Search() {
 			({ searchHistory }) => {
 				if (searchHistory.length > 0) {
 					setQuery(searchHistory[0].fullName);
-					pushSearchHistoryToFront(searchHistory[0]);
+					unshiftSearchHistory(searchHistory[0]);
 					setQuery(searchHistory[0].fullName);
 					setCurrentCity(searchHistory[0].city);
 				} else if ('geolocation' in navigator) {
@@ -178,16 +180,14 @@ export default function Search() {
 								{searchHistory.length > 0 && (
 									<motion.div key="search-results-history">
 										<h6 className="text-blue-light">Previous Searches</h6>
-										<div className="bg-white rounded-lg w-full md:min-w-96 py-2">
-											<ul className="px-4 max-h-[38dvh] md:max-h-[30dvh] overflow-y-auto divide-y divide-black/15">
-												{searchHistory.map(
-													({ searchedOn, city, fullName }, index) => (
-														<Result
-															btnClassName="px-1"
-															showButtons={true}
-															searchTimestamp={searchedOn}
-															city={city}
-															clickHandler={debounce(
+										<Card>
+											{searchHistory.map(
+												({ searchedOn, city, fullName }, index) => (
+													<Row key={`${index}-${city.fullName}-${searchedOn}`}>
+														<button
+															tabIndex={0}
+															className={`block py-3 flex-1 text-left hover:opacity-50 default-transition px-1`}
+															onClick={debounce(
 																() => {
 																	setSearchResult([]);
 																	setShowBackdrop(false);
@@ -196,7 +196,7 @@ export default function Search() {
 																	setHasError(false);
 
 																	setTimeout(() => {
-																		pushSearchHistoryToFront({
+																		unshiftSearchHistory({
 																			searchedOn,
 																			city,
 																			fullName,
@@ -205,13 +205,18 @@ export default function Search() {
 																},
 																1000,
 																{ leading: true, trailing: false },
-															)}
-															key={`${city.fullName}-${searchedOn}`}
+															)}>
+															{fullName}
+														</button>
+														<TrashBtn
+															clickHandler={() => {
+																deleteSearchHistory(searchedOn, fullName);
+															}}
 														/>
-													),
-												)}
-											</ul>
-										</div>
+													</Row>
+												),
+											)}
+										</Card>
 									</motion.div>
 								)}
 							</AnimatePresence>
@@ -227,15 +232,13 @@ export default function Search() {
 											{searchResult.length}{' '}
 											{searchResult.length > 1 ? 'cities' : 'city'} found
 										</h6>
-										<div
-											key="search-results"
-											className="bg-white rounded-lg w-full md:min-w-96 px-4 py-2 divide-y-2 divide-black/15">
-											<ul>
-												{searchResult.map((result) => (
-													<Result
-														btnClassName="px-1"
-														city={result}
-														clickHandler={debounce(
+										<Card>
+											{searchResult.map((result) => (
+												<Row key={`${result.lat},${result.lon}`}>
+													<button
+														tabIndex={0}
+														className={`block py-3 flex-1 text-left hover:opacity-50 default-transition px-1`}
+														onClick={debounce(
 															() => {
 																setSearchResult([]);
 																setShowBackdrop(false);
@@ -249,12 +252,12 @@ export default function Search() {
 															},
 															1000,
 															{ leading: true, trailing: false },
-														)}
-														key={`${result.lat},${result.lon}`}
-													/>
-												))}
-											</ul>
-										</div>
+														)}>
+														{result.fullName}
+													</button>
+												</Row>
+											))}
+										</Card>
 									</motion.div>
 								)}
 							</AnimatePresence>
