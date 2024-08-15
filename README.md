@@ -16,6 +16,12 @@ pnpm dev
 bun dev
 ```
 
+## Required Environment Variables
+
+```
+OPEN_WEATHER_KEY=<API_KEY> # sign up for a key here https://openweathermap.org/
+```
+
 ## Target Features
 
 1. ~~Geocoding API~~
@@ -34,4 +40,4 @@ bun dev
 1. Client-side search and history
 
    - ~~Allow for history deletion~~
-   - Error message if no results returned
+   - ~~Error message if no results returned~~
