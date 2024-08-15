@@ -32,7 +32,7 @@ export default function useFuse<T>({
 	}, [list, fuseOptions]);
 
 	const results = useMemo(() => {
-		if (query.length < fuseOptions.minLength) {
+		if (query.length < fuseOptions.minLength!) {
 			return list;
 		} else {
 			const matches = fuse.search(query);
