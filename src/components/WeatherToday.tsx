@@ -32,7 +32,7 @@ export default function WeatherToday({
 
 	return (
 		<AnimatePresence mode="wait">
-			{currentWeather && (
+			{currentWeather ? (
 				<motion.div
 					initial={{ opacity: 0, translateX: 40 }}
 					animate={{ opacity: 1, translateX: 0 }}
@@ -200,6 +200,33 @@ export default function WeatherToday({
 						)}
 					</Card>
 				</motion.div>
+			) : (
+				<Card className="lg:max-w-screen-sm w-full px-5 pt-4">
+					<h6 className="mb-0 max-w-36">
+						<Skeleton />
+					</h6>
+					<h3 className="max-w-32">
+						<Skeleton />
+					</h3>
+					<div className="w-3/4">
+						<Skeleton height={48} />
+					</div>
+					<div className="flex flex-row gap-x-2 mt-2">
+						<div className="flex-1 text-4xl">
+							<Skeleton />
+						</div>
+						<div className="flex-1 text-4xl">
+							<Skeleton />
+						</div>
+						<div className="flex-1 text-4xl">
+							<Skeleton />
+						</div>
+					</div>
+					<div className="text-3xl">
+						<Skeleton count={8} />
+					</div>
+					<div className="pb-2"></div>
+				</Card>
 			)}
 		</AnimatePresence>
 	);
