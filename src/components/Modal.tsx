@@ -1,9 +1,14 @@
-import { useAppStore } from '@/stores/App';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { useAppStore } from '@/stores/App';
 
 export default function Modal() {
 	const showBackdrop = useAppStore((state) => state.showBackdrop);
 	const setShowBackdrop = useAppStore((state) => state.setShowBackdrop);
+
+	useEffect(() => {
+		document.body.style.overflow = showBackdrop ? 'hidden' : '';
+	}, [showBackdrop]);
 
 	return (
 		<AnimatePresence>
