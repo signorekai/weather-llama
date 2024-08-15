@@ -1,5 +1,5 @@
-import type { City, CityWithName } from '@/types/City';
 import { type NextRequest } from 'next/server';
+import type { City, CityWithName } from '@/types/City';
 
 export const addNameToCity = (city: City): CityWithName => {
 	return {
