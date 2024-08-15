@@ -2,9 +2,11 @@
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import debounce from 'lodash.debounce';
+
+import type { CityWithName } from '@/types/City';
 import { useAppStore } from '@/stores/App';
 import { useSearchHistoryStore } from '@/stores/SearchHistory';
-import { City, CityWithName } from '@/types/City';
 import TrashBtn from './TrashBtn';
 import { Card, List, Row } from './Card';
 
