@@ -2,7 +2,8 @@ export const Card = ({
 	children,
 	className = '',
 }: Readonly<{ children: React.ReactNode; className?: string }>) => (
-	<div className={`bg-white rounded-lg w-full md:min-w-96 py-2 ${className}`}>
+	<div
+		className={`bg-white rounded-lg w-full md:min-w-96 py-2 relative ${className}`}>
 		{children}
 	</div>
 );
