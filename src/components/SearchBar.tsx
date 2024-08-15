@@ -7,7 +7,6 @@ import debounce from 'lodash.debounce';
 import type { CityWithName } from '@/types/City';
 import { useAppStore } from '@/stores/App';
 import { useSearchHistoryStore } from '@/stores/SearchHistory';
-import TrashBtn from './TrashBtn';
 import { Card, List, Row } from './Card';
 import SearchHistory from './SearchHistory';
 
@@ -19,15 +18,19 @@ export default function Search() {
 	const [searchResult, setSearchResult] = useState<CityWithName[]>([]);
 	const inputRef = useRef(null);
 
-	const showBackdrop = useAppStore((state) => state.showBackdrop);
-	const setShowBackdrop = useAppStore((state) => state.setShowBackdrop);
+	const [showBackdrop, setShowBackdrop] = useAppStore((state) => [
+		state.showBackdrop,
+		state.setShowBackdrop,
+	]);
 
 	const setCurrentCity = useAppStore((state) => state.setCurrentCity);
 
-	const searchHistory = useSearchHistoryStore((state) => state.searchHistory);
-	const addSearchHistory = useSearchHistoryStore((state) => state.add);
-	const unshiftSearchHistory = useSearchHistoryStore((state) => state.push);
-	const deleteSearchHistory = useSearchHistoryStore((state) => state.delete);
+	const [searchHistory, addSearchHistory, unshiftSearchHistory] =
+		useSearchHistoryStore((state) => [
+			state.searchHistory,
+			state.add,
+			state.push,
+		]);
 
 	const fetchCity = useCallback(async () => {
 		setIsFetching(true);
