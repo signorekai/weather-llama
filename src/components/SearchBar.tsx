@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import debounce from 'lodash.debounce';
+import { usePathname, useRouter } from 'next/navigation';
 
 import type { CityWithName } from '@/types/City';
 import { useAppStore } from '@/stores/App';
@@ -18,6 +19,9 @@ export default function Search() {
 	const [hasError, setHasError] = useState(false);
 	const [searchResult, setSearchResult] = useState<CityWithName[]>([]);
 	const inputRef = useRef(null);
+
+	const pathname = usePathname();
+	const router = useRouter();
 
 	const [showBackdrop, setShowBackdrop] = useAppStore((state) => [
 		state.showBackdrop,
@@ -175,6 +179,9 @@ export default function Search() {
 										<SearchHistory
 											clickHandler={() => {
 												setSearchQuery('');
+												if (pathname !== '/') {
+													router.push('/');
+												}
 											}}
 											searchHistory={filteredSearchHistory}
 											setSearchResult={setSearchResult}
