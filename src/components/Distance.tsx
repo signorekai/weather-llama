@@ -1,5 +1,4 @@
 import useUnits from '@/hooks/units';
-import { useAppStore } from '@/stores/App';
 
 export default function Distance({
 	value,
