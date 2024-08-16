@@ -13,6 +13,7 @@ import { useAppStore } from '@/stores/App';
 import { Forecast, SortedForecast } from '@/types/Forecast';
 import WeatherForecast from '@/components/WeatherForecast';
 import { SkeletonTheme } from 'react-loading-skeleton';
+import { getValidLocalDateTime } from './helpers';
 
 countries.registerLocale(english);
 
@@ -41,58 +42,67 @@ export default function Home() {
 		setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
 	}, []);
 
-	const fileForecasts = useCallback(({ data }: { data: ThreeHourResponse }) => {
-		// console.log(data, getTimeZones());
-		const countryName = countries.getName(data.city.country, 'en');
-		const IANA = `${countryName}/${data.city.name}`;
-
-		let today = DateTime.now().setZone(IANA);
-		if (!today.isValid) {
-			today = DateTime.now().setZone(countryName);
-		}
-
-		const endOfToday = today.endOf('day');
-		const days = [
-			today,
-			...[1, 2, 3, 4, 5].map((v) => endOfToday.plus({ days: v })),
-		];
-
-		const filedForecasts: { [T: string]: Forecast[] } = {};
-
-		data.list.forEach((forecast) => {
-			let forecastDate = DateTime.fromSeconds(forecast.dt).setZone(IANA);
-
-			if (!forecastDate.isValid) {
-				forecastDate = DateTime.fromSeconds(forecast.dt).setZone(countryName);
-			}
-
-			days.every((day) => {
-				const isSameDay = forecastDate.hasSame(day, 'day');
-				if (isSameDay) {
-					const date = day.toISODate();
-					if (date) {
-						if (filedForecasts.hasOwnProperty(date) === false) {
-							filedForecasts[date] = [];
-						}
-						filedForecasts[date].push({
-							lt: forecastDate.toLocaleString(DateTime.TIME_24_SIMPLE),
-							localDate: forecastDate.toLocaleString(
-								DateTime.DATE_MED_WITH_WEEKDAY,
-							),
-							...forecast,
-						});
-						return false;
-					} else {
-						return true;
-					}
-				}
-
-				return true;
+	const fileForecasts = useCallback(
+		({
+			data,
+			secondsOffset,
+		}: {
+			data: ThreeHourResponse;
+			secondsOffset: number;
+		}) => {
+			const [today, countryName, IANA] = getValidLocalDateTime({
+				countryCode: data.city.country,
+				cityName: data.city.name,
+				secondsOffset,
 			});
-		});
 
-		setForecastWeather(filedForecasts);
-	}, []);
+			console.log(51, today);
+
+			const endOfToday = today.endOf('day');
+			const days = [
+				today,
+				...[1, 2, 3, 4, 5].map((v) => endOfToday.plus({ days: v })),
+			];
+
+			const filedForecasts: { [T: string]: Forecast[] } = {};
+
+			data.list.forEach((forecast) => {
+				const forecastDate = getValidLocalDateTime({
+					countryName,
+					cityName: data.city.name,
+					secondsOffset,
+					DateTimeObj: DateTime.fromSeconds(forecast.dt),
+				})[0];
+
+				days.every((day) => {
+					const isSameDay = forecastDate.hasSame(day, 'day');
+					if (isSameDay) {
+						const date = day.toISODate();
+						if (date) {
+							if (filedForecasts.hasOwnProperty(date) === false) {
+								filedForecasts[date] = [];
+							}
+							filedForecasts[date].push({
+								lt: forecastDate.toLocaleString(DateTime.TIME_24_SIMPLE),
+								localDate: forecastDate.toLocaleString(
+									DateTime.DATE_MED_WITH_WEEKDAY,
+								),
+								...forecast,
+							});
+							return false;
+						} else {
+							return true;
+						}
+					}
+
+					return true;
+				});
+			});
+
+			setForecastWeather(filedForecasts);
+		},
+		[],
+	);
 
 	useEffect(() => {
 		if (currentCity) {
@@ -111,6 +121,7 @@ export default function Home() {
 						await forecastRes.json();
 					fileForecasts({
 						data: forecast.data,
+						secondsOffset: current.data.timezone,
 					});
 				} catch (error) {}
 			};

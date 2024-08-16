@@ -12,6 +12,7 @@ import useUnits, { presetUnits } from '@/hooks/units';
 import { Forecast } from '@/types/Forecast';
 import Temperature from './Temperature';
 import Distance from './Distance';
+import { getValidLocalDateTime } from '@/app/helpers';
 
 export default function WeatherToday({
 	forecastWeather,
@@ -27,7 +28,14 @@ export default function WeatherToday({
 		state.currentCity,
 	]);
 
-	const dt = DateTime.now();
+	let dt = DateTime.now().setLocale('en-SG');
+	if (currentWeather?.timezone && currentCity?.name) {
+		dt = getValidLocalDateTime({
+			countryCode: currentCity?.country,
+			cityName: currentCity?.name,
+			secondsOffset: currentWeather.timezone,
+		})[0];
+	}
 
 	return (
 		<AnimatePresence mode="wait">
@@ -40,25 +48,7 @@ export default function WeatherToday({
 					key={currentCity?.fullName}>
 					<Card className="px-5 pt-4 pb-1">
 						<h6 className="mb-0">
-							{currentWeather?.timezone ? (
-								<>
-									{dt
-										.setZone(
-											`UTC${
-												currentWeather.timezone > 0
-													? `+${Math.floor(currentWeather.timezone / 3600)}`
-													: currentWeather.timezone < 0
-													? `${Math.floor(currentWeather.timezone / 3600)}`
-													: ''
-											}`,
-										)
-										.toLocaleString(DateTime.DATETIME_FULL)}
-								</>
-							) : (
-								<>
-									{dt.setLocale('en-SG').toLocaleString(DateTime.DATETIME_FULL)}
-								</>
-							)}
+							{dt.toLocaleString(DateTime.DATETIME_FULL)}
 						</h6>
 						<h3 className="inline-block min-w-52">
 							{currentCity?.fullName || <Skeleton />}

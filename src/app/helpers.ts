@@ -16,6 +16,8 @@ export const addNameToCity = (city: City): CityWithName => {
 
 interface GetValidLocalDateTimeParamBasic {
 	cityName: string;
+	DateTimeObj?: DateTime;
+	secondsOffset: number;
 }
 
 interface GetValidLocalDateTimeParamWithCountryName
@@ -41,17 +43,32 @@ export const getValidLocalDateTime = (
 		? params.countryName
 		: countries.getName(params.countryCode!, 'en') || '';
 
-	const { cityName, countryCode = '' } = params;
-
+	const { cityName, countryCode = '', secondsOffset } = params;
 	const IANA = `${countryName}/${cityName}`;
 
-	let today = DateTime.now().setZone(IANA);
+	const nowDateTimeObj = params.DateTimeObj
+		? params.DateTimeObj
+		: DateTime.now();
+	let today = nowDateTimeObj.setZone(IANA);
+
 	if (!today.isValid) {
-		today = DateTime.now().setZone(countryName);
+		// IANA not accepted - 'United Kingdom/Newport United Kingdom'
+		today = nowDateTimeObj.setZone(countryName);
 	}
 
 	if (!today.isValid) {
-		today = DateTime.now().setZone(countryCode);
+		// country name not accepted - 'United Kingdom'
+		// manually form offset string e.g. "UTC+8"
+		const hoursOffset = secondsOffset / 3600;
+		let stringOffset = 'UTC';
+		if (hoursOffset > 0) {
+			stringOffset += `+${hoursOffset}`;
+		}
+
+		if (hoursOffset < 0) {
+			stringOffset += `${hoursOffset}`;
+		}
+		today = nowDateTimeObj.setZone(stringOffset);
 	}
 
 	if (!today.isValid) {
