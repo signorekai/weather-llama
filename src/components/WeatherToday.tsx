@@ -27,7 +27,6 @@ export default function WeatherToday({
 		state.currentCity,
 	]);
 
-	const unitsInUse = useUnits();
 	const dt = DateTime.now();
 
 	return (
@@ -41,15 +40,15 @@ export default function WeatherToday({
 					key={currentCity?.fullName}>
 					<Card className="px-5 pt-4 pb-1">
 						<h6 className="mb-0">
-							{currentWeather?.weather ? (
+							{currentWeather?.timezone ? (
 								<>
 									{dt
 										.setZone(
 											`UTC${
 												currentWeather.timezone > 0
-													? `+${currentWeather.timezone / 3600}`
+													? `+${Math.floor(currentWeather.timezone / 3600)}`
 													: currentWeather.timezone < 0
-													? `${currentWeather.timezone / 3600}`
+													? `${Math.floor(currentWeather.timezone / 3600)}`
 													: ''
 											}`,
 										)
@@ -153,7 +152,7 @@ export default function WeatherToday({
 								)}
 							</div>
 						</div>
-						{forecastWeather ? (
+						{forecastWeather && Object.keys(forecastWeather).length > 0 ? (
 							<div className="mt-4">
 								<h6 className="mb-0">Rest of day</h6>
 								<List className="!px-0 max-h-none md:max-h-none !overflow-hidden">
