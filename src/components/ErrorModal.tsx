@@ -11,7 +11,7 @@ export default function ErrorModal({
 	resetErrorBoundary: () => void;
 }) {
 	return (
-		<div className="mt-4 lg:max-w-screen-sm w-full mx-auto">
+		<div className="mt-4 lg:max-w-screen-sm w-full mx-auto px-4">
 			<AnimatePresence>
 				{error && (
 					<motion.div
