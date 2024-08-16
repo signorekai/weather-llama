@@ -1,16 +1,20 @@
 'use client';
-import {
+import type {
 	CurrentResponse,
 	ThreeHourResponse,
 } from 'openweathermap-ts/dist/types';
 import { DateTime } from 'luxon';
 import { useState, useCallback, useEffect } from 'react';
+import countries from 'i18n-iso-countries';
+import english from 'i18n-iso-countries/langs/en.json';
 
 import WeatherToday from '@/components/WeatherToday';
 import { useAppStore } from '@/stores/App';
 import { Forecast, SortedForecast } from '@/types/Forecast';
 import WeatherForecast from '@/components/WeatherForecast';
 import { SkeletonTheme } from 'react-loading-skeleton';
+
+countries.registerLocale(english);
 
 export default function Home() {
 	const [currentCity, darkMode, setDarkMode] = useAppStore((state) => [
@@ -37,58 +41,58 @@ export default function Home() {
 		setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
 	}, []);
 
-	const fileForecasts = useCallback(
-		({ data, timezone }: { data: ThreeHourResponse; timezone: number }) => {
-			const stringTimeZone = `UTC${
-				timezone > 0
-					? `+${timezone / 3600}`
-					: timezone < 0
-					? `${timezone / 3600}`
-					: ''
-			}`;
+	const fileForecasts = useCallback(({ data }: { data: ThreeHourResponse }) => {
+		// console.log(data, getTimeZones());
+		const countryName = countries.getName(data.city.country, 'en');
+		const IANA = `${countryName}/${data.city.name}`;
 
-			const today = DateTime.now().setZone(stringTimeZone);
-			today.endOf('day');
-			const days = [
-				today,
-				...[1, 2, 3, 4, 5].map((v) => today.plus({ days: v })),
-			];
+		let today = DateTime.now().setZone(IANA);
+		if (!today.isValid) {
+			today = DateTime.now().setZone(countryName);
+		}
 
-			const filedForecasts: { [T: string]: Forecast[] } = {};
+		const endOfToday = today.endOf('day');
+		const days = [
+			today,
+			...[1, 2, 3, 4, 5].map((v) => endOfToday.plus({ days: v })),
+		];
 
-			data.list.forEach((forecast) => {
-				const forecastDate = DateTime.fromSeconds(forecast.dt).setZone(
-					stringTimeZone,
-				);
-				days.every((day) => {
-					const isSameDay = forecastDate.hasSame(day, 'day');
-					if (isSameDay) {
-						const date = day.toISODate();
-						if (date) {
-							if (filedForecasts.hasOwnProperty(date) === false) {
-								filedForecasts[date] = [];
-							}
-							filedForecasts[date].push({
-								lt: forecastDate.toLocaleString(DateTime.TIME_24_SIMPLE),
-								localDate: forecastDate.toLocaleString(
-									DateTime.DATE_MED_WITH_WEEKDAY,
-								),
-								...forecast,
-							});
-							return false;
-						} else {
-							return true;
+		const filedForecasts: { [T: string]: Forecast[] } = {};
+
+		data.list.forEach((forecast) => {
+			let forecastDate = DateTime.fromSeconds(forecast.dt).setZone(IANA);
+
+			if (!forecastDate.isValid) {
+				forecastDate = DateTime.fromSeconds(forecast.dt).setZone(countryName);
+			}
+
+			days.every((day) => {
+				const isSameDay = forecastDate.hasSame(day, 'day');
+				if (isSameDay) {
+					const date = day.toISODate();
+					if (date) {
+						if (filedForecasts.hasOwnProperty(date) === false) {
+							filedForecasts[date] = [];
 						}
+						filedForecasts[date].push({
+							lt: forecastDate.toLocaleString(DateTime.TIME_24_SIMPLE),
+							localDate: forecastDate.toLocaleString(
+								DateTime.DATE_MED_WITH_WEEKDAY,
+							),
+							...forecast,
+						});
+						return false;
+					} else {
+						return true;
 					}
+				}
 
-					return true;
-				});
+				return true;
 			});
+		});
 
-			setForecastWeather(filedForecasts);
-		},
-		[],
-	);
+		setForecastWeather(filedForecasts);
+	}, []);
 
 	useEffect(() => {
 		if (currentCity) {
@@ -107,7 +111,6 @@ export default function Home() {
 						await forecastRes.json();
 					fileForecasts({
 						data: forecast.data,
-						timezone: current.data.timezone,
 					});
 				} catch (error) {}
 			};
